@@ -47,4 +47,11 @@ function onRequest(req: IncomingMessage, res: ServerResponse) {
   req.pipe(proxy, {
     end: true
   });
+
+  proxy.on('error', function(err) {
+    console.log("Request failed")
+    res.writeHead(500, cors_headers);
+    res.write("Request to node failed")
+    res.end()
+  });
 }

@@ -57,6 +57,12 @@ function App() {
     // Get data and save the result
     let address = ip + ':' + port
     getNodeData(ip, port, password).then(result => {
+      if (password != undefined) {
+        // Reset fields
+        setIpField('')
+        setPortField('')
+        setPasswordField('')
+      }
       updateNode(address, result)
       let index = nodesKeys.indexOf(address)
       if (index == -1) {
@@ -67,12 +73,12 @@ function App() {
       if (e instanceof TequilapiError && e.isUnauthorizedError) {
         alert("Request unauthorized, you need to add your node again.")
         removeNode(address)
+      } else {
+        if (e.originalResponseData) alert(e.originalResponseData)
+        else alert(e.message)
       }
     })
-    // Reset fields
-    setIpField('')
-    setPortField('')
-    setPasswordField('')
+    
   }
 
   async function checkNodeAPI(nodeApi: TequilapiClient | null, ip: string, port: string, token: string): Promise<TequilapiClient> {

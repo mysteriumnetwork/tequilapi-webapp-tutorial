@@ -6,7 +6,7 @@ Our webapp will consist in 2 parts:
 - A react application
 - A web proxy
 
-We need to use a web proxy due to CORS limitations, if in the future we are able to set the CORS origin whitelist in our nodes, we will no longer need it. These limitations are set for security reasons.
+We need to use a web proxy due to CORS limitations, in the future, if we are able to set the CORS origin whitelist in our nodes, we will no longer need it. These limitations are set for security reasons.
 
 To follow this tutorial you will need some requeriments:
 - Node.js >= 14.0
@@ -88,7 +88,18 @@ We could add for validity checks to make sure that the url we are getting is cor
   });
 ```
 
-9. Finally, we will also need to answer to CORS preflight requests. A CORS preflight request is a CORS request that checks to see if the CORS protocol is understood and a server is aware using specific methods and headers.  
+9. We will add some code to handle request errors, this way, if the address we are given doesn't work we will notify it as an API response instead of crashing:
+
+```ts
+  proxy.on('error', function(err) {
+    console.log("Request failed")
+    res.writeHead(500, cors_headers);
+    res.write("Request to node failed")
+    res.end()
+  });
+```
+
+10. Finally, we will also need to answer to CORS preflight requests. A CORS preflight request is a CORS request that checks to see if the CORS protocol is understood and a server is aware using specific methods and headers.  
  For example, a client might be asking a server if it would allow a DELETE request, before sending a DELETE request, by using a preflight request. You can learn more about them using this [link](https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request).  
  To answer them saying that everything is okay we should use this code at the start of the onRequest function:
 
@@ -172,6 +183,12 @@ interface nodeData {
     // Get data and save the result
     let address = ip + ':' + port
     getNodeData(ip, port, password).then(result => {
+      if (password != undefined) {
+        // Reset fields
+        setIpField('')
+        setPortField('')
+        setPasswordField('')
+      }
       updateNode(address, result)
       let index = nodesKeys.indexOf(address)
       if (index == -1) {
@@ -182,12 +199,11 @@ interface nodeData {
       if (e instanceof TequilapiError && e.isUnauthorizedError) {
         alert("Request unauthorized, you need to add your node again.")
         removeNode(address)
+      } else {
+        if (e.originalResponseData) alert(e.originalResponseData)
+        else alert(e.message)
       }
     })
-    // Reset fields
-    setIpField('')
-    setPortField('')
-    setPasswordField('')
   }
 
   async function getNodeData(ip: string, port: string, password?: string) : Promise<nodeData> {
