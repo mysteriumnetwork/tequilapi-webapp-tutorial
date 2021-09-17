@@ -22,20 +22,28 @@ function App() {
   const removeNode = (k: string) => {
     nodes.delete(k)
     setNodes(new Map(nodes));
-    //TODO: remove node from list
+    setNodesKeys((oldArray) => oldArray.filter(x => x != k))
   }
 
+  // Retrieve data from local storage
   useEffect(() => {
     if(localStorage.getItem('nodes') && localStorage.getItem('nodesKeys')) {
       setNodes(new Map<string,nodeData>(JSON.parse(localStorage.getItem('nodes')!)))
       setNodesKeys(JSON.parse(localStorage.getItem('nodesKeys')!) as string[])
     }
-    refreshAll()
   }, []);
 
+  // Save node data to local storage
   useEffect(() => {
+    // If none have API initialized call refreshAll
+    if (nodesKeys.map(key => {
+      if (nodes.has(key) && !(nodes.get(key)!.api instanceof HttpTequilapiClient))
+        return false
+      else
+        return true
+    }).every(x => x == false)) refreshAll()
     localStorage.setItem('nodes', JSON.stringify(Array.from(nodes.entries())));
-  }, [nodes]);
+  }, [nodes, nodesKeys]);
 
   useEffect(() => {
     localStorage.setItem('nodesKeys', JSON.stringify(nodesKeys));
@@ -45,7 +53,7 @@ function App() {
   const [portField, setPortField] = useState('')
   const [passwordField, setPasswordField] = useState('')
 
-  function addNewNode(ip: string, port: string, password?: string) {
+  function addOrUpdateNode(ip: string, port: string, password?: string) {
     // Get data and save the result
     let address = ip + ':' + port
     getNodeData(ip, port, password).then(result => {
@@ -61,6 +69,7 @@ function App() {
         removeNode(address)
       }
     })
+    // Reset fields
     setIpField('')
     setPortField('')
     setPasswordField('')
@@ -112,7 +121,7 @@ function App() {
   function refreshAll() {
     for (let nodeKey of nodesKeys) {
       let addressSplit = nodeKey.split(':')
-      addNewNode(addressSplit[0], addressSplit[1])
+      addOrUpdateNode(addressSplit[0], addressSplit[1])
     }
   }
 
@@ -124,10 +133,11 @@ function App() {
           providerId: nodes.get(address)!.idenities[0].id,
           type: "wireguard"
         })
-        addNewNode(addressSplit[0], addressSplit[1])
+        addOrUpdateNode(addressSplit[0], addressSplit[1])
       } catch (e) {
+        // User doesn't have the updated status of the node, so we update it
         if (e instanceof TequilapiError && e.message.startsWith("Service already running")) {
-          addNewNode(addressSplit[0], addressSplit[1])
+          addOrUpdateNode(addressSplit[0], addressSplit[1])
         } else throw e
       }
     }
@@ -138,10 +148,11 @@ function App() {
       let addressSplit = address.split(':')
       try {
         await nodes.get(address)!.api.serviceStop(nodes.get(address)!.services[0].id)
-        addNewNode(addressSplit[0], addressSplit[1])
+        addOrUpdateNode(addressSplit[0], addressSplit[1])
       } catch (e) {
+        // User doesn't have the updated status of the node, so we update it
         if (e instanceof TequilapiError && e.message.startsWith("Service not found")) {
-          addNewNode(addressSplit[0], addressSplit[1])
+          addOrUpdateNode(addressSplit[0], addressSplit[1])
         } else throw e
       }
     }
@@ -179,7 +190,7 @@ function App() {
           <TextField type="text" label="IP" value={ipField} onChange={(event) => setIpField(event.target.value)}></TextField>
           <TextField type="number" label="Port" value={portField} onChange={(event) => setPortField(event.target.value)} style={{marginTop: '0.5em'}}></TextField>
           <TextField type="password" label="Password" value={passwordField} onChange={(event) => setPasswordField(event.target.value)} style={{marginTop: '0.5em'}}></TextField>
-          <Button variant="contained" color="primary" onClick={() => addNewNode(ipField, portField, passwordField)} style={{marginTop: '2em'}}>Add Node</Button>
+          <Button variant="contained" color="primary" onClick={() => addOrUpdateNode(ipField, portField, passwordField)} style={{marginTop: '2em'}}>Add Node</Button>
         </Box>
         <Box display="flex" flexDirection="column" alignItems="center">
           <TableContainer component={Paper} style={{marginLeft: "10%", marginRight: "10%", width: "auto", marginTop: '2em'}}>

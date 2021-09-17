@@ -7585,10 +7585,10 @@ multicast-dns@^6.0.1:
     dns-packet "^1.3.1"
     thunky "^1.0.2"
 
-mysterium-vpn-js@^15.1.0:
-  version "15.1.0"
-  resolved "https://registry.yarnpkg.com/mysterium-vpn-js/-/mysterium-vpn-js-15.1.0.tgz#a10160ae3e3727fdd46236c7204229bdf6d9a85a"
-  integrity sha512-GsjecOCUa0LLSWJZftLlk795uWXJiFBqIqwgo4MIPeFaJNQ3hgy7IAe1JuiD994ZiFPS0ZpuUeOBqadbeU/MSA==
+mysterium-vpn-js@^15.1.1:
+  version "15.1.1"
+  resolved "https://registry.yarnpkg.com/mysterium-vpn-js/-/mysterium-vpn-js-15.1.1.tgz#d32a3329a72baa6c068b754fc1a6bd1b9b70a0ac"
+  integrity sha512-pkcRQqPdfatRqfTHe20xzOlyxluBgr6WD4JDWoGXH/CjPqTq9cd44Mxw0s7fFwy5pddt9SCR91+0pP/3ZcLB7Q==
   dependencies:
     axios "^0.21.1"
     camelcase-keys "^7.0.0"
