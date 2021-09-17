@@ -121,7 +121,7 @@ function App() {
         token: token
       }
     }
-    throw Error("Something went wrong when calling the node api")
+    throw Error("Something went wrong when calling the node API")
   }
 
   function refreshAll() {
