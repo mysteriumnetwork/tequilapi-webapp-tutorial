@@ -88,7 +88,7 @@ We could add more validity checks to make sure that the URL we are getting is co
   });
 ```
 
-9. We will add some code to handle request errors, this way, if the address we are given doesn't work we will notify it as an API response instead of crashing:
+9. Also, we should add some code to handle request errors, this way, if the address we are given doesn't work we will notify it as an API response instead of crashing:
 
 ```ts
   proxy.on('error', function(err) {
@@ -125,14 +125,14 @@ to the root of `package.json` and using `yarn dev`.
 
 ## Webapp creation
 
-1. We will start by going to the root of our project and running the create-react-app utility with the typescript option using `npx create-react-app --template typescript frontend`. This will create a new react project called frontend.
+1. Let's start by going to the root of our project and running the create-react-app utility with the typescript option using `npx create-react-app --template typescript frontend`. This will create a new react project called frontend.
 
 2. Now, to install our dependencies we will use:
  - `yarn add mysterium-vpn-js`: to install the mysterium-vpn-js npm package
  - `yarn add @material-ui/core`: for style, so our web app is not ugly.
  - `yarn add @material-ui/icons`: for the refresh, start, and stop icons.
 
-3. We will make a very simple web app that will allow us to add nodes, see some stats and be able to turn the wireguard service on and off. To do so we will just modify the `App.tsx` file. We will start creating some variables to store our data. First, we will create a list of all our nodes addresses, a map to store the data of each node, and some helper functions to manipulate them:
+3. We will create a very simple web app that will allow us to add nodes, see some stats and be able to turn the wireguard service on and off. To do so we will just modify the `App.tsx` file. We will start creating some variables to store our data. First, we will create a list of all our nodes addresses, a map to store the data of each node, and some helper functions to manipulate them:
 
 ```ts
   const [nodes, setNodes] = useState<Map<string,nodeData>>(new Map())
@@ -147,7 +147,7 @@ to the root of `package.json` and using `yarn dev`.
   }
 ```
 
-4. We will also create some state variables for our inputs of IP, port, and password, which is the data we need to connect to our nodes. Then we can also add text fields in our Html code for modifying the variables, as well as a button to trigger the addition of the node:
+4. Let's also create some state variables for our inputs of IP, port, and password, which is the data we need to connect to our nodes. Then we can also add text fields in our Html code for modifying the variables, as well as a button to trigger the addition of the node:
 
 ```ts
   const [ipField, setIpField] = useState('')
@@ -163,7 +163,7 @@ to the root of `package.json` and using `yarn dev`.
   </Box>
 ```
 
-5. We will create a return type for the node data, this is all the data we will save in our nodes Map created in step 3:
+5. For a nice autocomplete experience, we can create a return type for the node data, this is all the data we will save in our nodes Map created in step 3:
 
 ```ts
 interface nodeData {
@@ -334,7 +334,7 @@ interface nodeData {
   </Box>
 ```
 
-9. Of course now we need a function to update all the nodes, which is very simple:
+9. Of course, now we need a function to update all the nodes, which is very simple:
 
 ```ts
   function refreshAll() {
