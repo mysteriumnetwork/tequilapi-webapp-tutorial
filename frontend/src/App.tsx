@@ -1,6 +1,6 @@
 import { TextField, Box, Button, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, StylesProvider, IconButton } from '@material-ui/core';
 import { HttpTequilapiClient, IdentityRef, NodeHealthcheck, ServiceInfo, SessionStatsAggregatedResponse, TequilapiClient, TequilapiClientFactory, TequilapiError } from 'mysterium-vpn-js';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Refresh, PlayArrow, Stop } from '@material-ui/icons';
 import './App.css';
 
@@ -22,7 +22,7 @@ function App() {
   const removeNode = (k: string) => {
     nodes.delete(k)
     setNodes(new Map(nodes));
-    setNodesKeys((oldArray) => oldArray.filter(x => x != k))
+    setNodesKeys((oldArray) => oldArray.filter(x => x !== k))
   }
 
   // Retrieve data from local storage
@@ -41,8 +41,9 @@ function App() {
         return false
       else
         return true
-    }).every(x => x == false)) refreshAll()
+    }).every(x => x === false)) refreshAll()
     localStorage.setItem('nodes', JSON.stringify(Array.from(nodes.entries())));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, nodesKeys]);
 
   useEffect(() => {
@@ -57,7 +58,7 @@ function App() {
     // Get data and save the result
     let address = ip + ':' + port
     getNodeData(ip, port, password).then(result => {
-      if (password != undefined) {
+      if (password !== undefined) {
         // Reset fields
         setIpField('')
         setPortField('')
@@ -65,7 +66,7 @@ function App() {
       }
       updateNode(address, result)
       let index = nodesKeys.indexOf(address)
-      if (index == -1) {
+      if (index === -1) {
         setNodesKeys(oldArray => [...oldArray, address])
       }
     }).catch((e: any) => {
@@ -94,7 +95,7 @@ function App() {
     let address = ip + ':' + port
     let nodeApi: TequilapiClient | null = null
     let token: string | null = null
-    if (password == undefined) {
+    if (password === undefined) {
       // If no password we assume the token is already in the api and saved
       if (nodes.has(address)) {
         token = nodes.get(address)!.token
@@ -177,7 +178,7 @@ function App() {
           <TableCell>{nodes.get(key)!.stats.stats.count}</TableCell>
           <TableCell>{sumTokens.toFixed(2)}</TableCell>
           {apiLoaded ? (<TableCell>
-            {nodes.get(key)!.services.length == 0 && <IconButton aria-label="start" onClick={() => startNode(key)}>
+            {nodes.get(key)!.services.length === 0 && <IconButton aria-label="start" onClick={() => startNode(key)}>
               <PlayArrow />
             </IconButton>}
             {nodes.get(key)!.services.length > 0 && <IconButton aria-label="stop" onClick={() => stopNode(key)}>
@@ -186,7 +187,7 @@ function App() {
           </TableCell>) : (<TableCell>No API loaded</TableCell>)}
         </TableRow>)
     }
-    else return
+    else return <TableRow key={'row_'+i}></TableRow>
   })
 
   return (
