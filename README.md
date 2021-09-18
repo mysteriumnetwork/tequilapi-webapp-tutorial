@@ -6,7 +6,7 @@ Our web app will consist of 2 parts:
 - A react application
 - A web proxy
 
-We need to use a web proxy due to CORS limitations, in the future, if we can set the CORS origin whitelist in our nodes, we will no longer need it. These limitations are set for security reasons.
+We need to use a web proxy due to CORS limitations. In the future, if we can set the CORS origin whitelist in our nodes, we will no longer need it. These limitations are set for security reasons.
 
 To follow this tutorial you will need some requirements:
 - Node.js >= 14.0
